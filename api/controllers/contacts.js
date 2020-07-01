@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { promises: fsPromises } = fs;
 
-const contactsPath = path.join('./db', 'contacts.json');
+const contactsPath = path.join(__dirname, '../..', 'db', 'contacts.json');
 
 function listContacts() {
   fs.readFile(contactsPath, 'utf-8', (err, data) => {
@@ -29,18 +29,16 @@ async function removeContact(contactId) {
 }
 
 async function addContact(name, email, phone) {
-  function getRandomInteger() {
-    return Math.floor(Math.random() * (100 - 11)) + 11;
-  }
+  const data = await fsPromises.readFile(contactsPath, 'utf-8');
+  const newData = JSON.parse(data);
 
   const newContact = {
-    id: getRandomInteger(),
+    id: newData.length + 1,
     name,
     email,
     phone,
   };
-  const data = await fsPromises.readFile(contactsPath, 'utf-8');
-  const newData = JSON.parse(data);
+
   newData.push(newContact);
 
   fs.writeFile(contactsPath, JSON.stringify(newData), err => {

@@ -20,6 +20,9 @@
   },
   "homepage": "https://github.com/Saashen/nodejs#readme",
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0",
     "yargs": "^15.3.1"
   },
   "devDependencies": {
