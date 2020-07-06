@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const morgan = require('morgan');
 
 const app = express();
 const router = require('./router');
@@ -11,7 +12,7 @@ const errorHandler = (err, req, res, next) => {
 const startServer = port => {
   app.use(cors('*'));
   app.use(express.json());
-  app.use('/', router);
+  app.use('/api', router);
   app.use(errorHandler);
 
   app.listen(port);

@@ -1,14 +1,22 @@
 const express = require('express');
-const apiRoutes = express.Router();
+const apiRouter = express.Router();
 
-const getContacts = require('./routers/getContacts');
+const {
+  listContacts,
+  getContactById,
+  addContact,
+  removeContact,
+  updateContact,
+} = require('./controllers/contacts');
+const {
+  validateCreateUser,
+  validateUpdateUser,
+} = require('./controllers/validation');
 
-apiRoutes.get('/api/contacts', getContacts);
+apiRouter.get('/contacts', listContacts);
+apiRouter.get('/contacts/:contactId', getContactById);
+apiRouter.post('/contacts', validateCreateUser, addContact);
+apiRouter.delete('/contacts/:contactId', removeContact);
+apiRouter.patch('/contacts/:contactId', validateUpdateUser, updateContact);
 
-// @ GET /api/contacts
-// @ GET /api/contacts/:contactId
-// @ POST /api/contacts
-// @ DELETE /api/contacts/:contactId
-// @ PATCH /api/contacts/:contactId
-
-module.exports = apiRoutes;
+module.exports = apiRouter;
