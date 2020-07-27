@@ -22,7 +22,7 @@ const contactSchema = new Schema(
       type: String,
       unique: true,
       required: true,
-      validate: () => this.email.includes('@'),
+      validate: () => this.email && this.email.includes('@'),
     },
 
     phone: {

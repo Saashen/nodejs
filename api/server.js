@@ -6,7 +6,7 @@ const app = express();
 const router = require('./routes/router');
 
 const errorHandler = (err, req, res, next) => {
-  res.status(500).send('Error found: ' + err.stack);
+  res.status(500).send({ message: err.message });
 };
 
 const startServer = port => {

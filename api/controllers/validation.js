@@ -13,7 +13,7 @@ const validateCreateUser = (req, res, next) => {
   const result = Joi.validate(req.body, createUserRules);
   if (result.error) {
     return res.status(400).send({
-      log: result.error,
+      body: req.body,
       message: `missing required ${result.error.details[0].context.key} field`,
     });
   }
