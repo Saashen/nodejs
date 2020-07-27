@@ -5,18 +5,19 @@ const {
   listContacts,
   getContactById,
   addContact,
-  removeContact,
   updateContact,
-} = require('./controllers/contacts');
+  removeContact,
+} = require('../../models');
+
 const {
   validateCreateUser,
   validateUpdateUser,
-} = require('./controllers/validation');
+} = require('../controllers/validation');
 
 apiRouter.get('/contacts', listContacts);
 apiRouter.get('/contacts/:contactId', getContactById);
 apiRouter.post('/contacts', validateCreateUser, addContact);
-apiRouter.delete('/contacts/:contactId', removeContact);
 apiRouter.patch('/contacts/:contactId', validateUpdateUser, updateContact);
+apiRouter.delete('/contacts/:contactId', removeContact);
 
 module.exports = apiRouter;

@@ -2,14 +2,18 @@ const Joi = require('joi');
 
 const validateCreateUser = (req, res, next) => {
   const createUserRules = Joi.object({
+    subscription: Joi.string(),
+    token: Joi.string(),
     name: Joi.string().required(),
     email: Joi.string().required(),
     phone: Joi.string().required(),
+    password: Joi.string().required(),
   });
 
   const result = Joi.validate(req.body, createUserRules);
   if (result.error) {
     return res.status(400).send({
+      log: result.error,
       message: `missing required ${result.error.details[0].context.key} field`,
     });
   }

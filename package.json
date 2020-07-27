@@ -2,12 +2,12 @@
   "name": "nodejs",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "debug": "node --inspect index.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "debug": "node --inspect app.js"
   },
   "repository": {
     "type": "git",
@@ -21,8 +21,11 @@
   "homepage": "https://github.com/Saashen/nodejs#readme",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "joi": "^14.3.1",
+    "mongodb": "^3.5.9",
+    "mongoose": "^5.9.25",
     "morgan": "^1.10.0",
     "yargs": "^15.3.1"
   },
