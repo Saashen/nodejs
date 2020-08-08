@@ -9,4 +9,11 @@ const createUser = async ({ email, password }) => {
   return user.save();
 };
 
-module.exports = { findById, findByEmail, createUser };
+const updateUserSubscription = async ({ id, newValue }) =>
+  User.findByIdAndUpdate(
+    id,
+    { $set: { subscription: newValue } },
+    { returnOriginal: false, upsert: false },
+  );
+
+module.exports = { findById, findByEmail, createUser, updateUserSubscription };

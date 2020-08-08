@@ -1,8 +1,11 @@
 const { contacts } = require('../models');
+const { DEFAULT_PAGE, DEFAULT_LIMIT } = require('../helpers/constants');
 
 const listContacts = async (req, res, next) => {
+  const { page = DEFAULT_PAGE, limit = DEFAULT_LIMIT, sub } = req.query;
+
   try {
-    const result = await contacts.getAllContacts();
+    const result = await contacts.getAllContacts({ page, limit, sub });
     res.status(200).send(result);
   } catch (err) {
     next(err);
