@@ -2,7 +2,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const dbUri = process.env.DB_URI;
 
-mongoose.connect(dbUri, {
+const connection = mongoose.connect(dbUri, {
   promiseLibrary: global.Promise,
   useNewUrlParser: true,
   useCreateIndex: true,
@@ -19,4 +19,8 @@ mongoose.connection.on('error', err => {
   process.exit(1);
 });
 
-mongoose.connection.on('disconnected', () => console.log('Database disconnected'))
+mongoose.connection.on('disconnected', () =>
+  console.log('Database disconnected'),
+);
+
+module.exports = connection;
