@@ -1,15 +1,15 @@
 const User = require('./schemas/user');
 
-const findById = async id => User.findOne({ _id: id });
+const findById = id => User.findOne({ _id: id });
 
-const findByEmail = async email => User.findOne({ email });
+const findByEmail = email => User.findOne({ email });
 
-const createUser = async ({ email, password }) => {
+const createUser = ({ email, password }) => {
   const user = new User({ email, password });
   return user.save();
 };
 
-const updateUserSubscription = async ({ id, newValue }) =>
+const updateUserSubscription = ({ id, newValue }) =>
   User.findByIdAndUpdate(
     id,
     { $set: { subscription: newValue } },

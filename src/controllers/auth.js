@@ -1,18 +1,38 @@
+const fs = require('fs');
+const path = require('path');
+
 const jwt = require('jsonwebtoken');
 const { users } = require('../models');
 require('dotenv').config();
 
 const registration = async (req, res, next) => {
-  const { email, password } = req.body;
+  const password = req.body.password;
+  const email = req.body.email.toLowerCase();
   const user = await users.findByEmail(email);
 
-  user &&
-    res.status(409).send({
+  if (user) {
+    return res.status(409).send({
       message: 'Email in use',
     });
+  }
 
   try {
     const newUser = await users.createUser({ email, password });
+
+    if (req.file) {
+      await fs.rename(
+        req.file.path,
+        path.join(
+          __dirname,
+          '../../public/images',
+          Date.now() + '-' + req.file.originalname,
+        ),
+        err => {
+          if (err) throw err;
+        },
+      );
+    }
+
     res.status(201).send({
       user: {
         email: newUser.email,
@@ -25,23 +45,31 @@ const registration = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
-  const { email, password } = req.body;
+  const password = req.body.password;
+  const email = req.body.email.toLowerCase();
   const user = await users.findByEmail(email);
 
   if (!user || !user.validPassport(password)) {
-    res.status(401).send({ message: 'Email or password is wrong.' });
+    return res.status(401).send({ message: 'Email or password is wrong.' });
   }
 
-  const payload = { id: user._id };
-  const token = jwt.sign(payload, process.env.SECRET_WORD, { expiresIn: '1h' });
-  await user.update({ token });
-  return res.status(200).send({
-    token,
-    user: {
-      email: user.email,
-      subscription: user.subscription,
-    },
-  });
+  try {
+    const payload = { id: user._id };
+    const token = jwt.sign(payload, process.env.SECRET_WORD, {
+      expiresIn: '1h',
+    });
+
+    await user.updateOne({ token });
+    return res.status(200).send({
+      token,
+      user: {
+        email: user.email,
+        subscription: user.subscription,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 const logout = async (req, res, next) => {
