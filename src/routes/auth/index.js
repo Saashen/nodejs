@@ -3,13 +3,13 @@ const authRouter = express.Router();
 
 const { registration, login, logout } = require('../../controllers/auth');
 const { validateUser } = require('../../validation/authValidation');
-const { upload } = require('../../controllers/multer');
+const { upload } = require('../../helpers/multer');
 const { isAuth } = require('../../validation/tokenValidation');
 
 authRouter.post(
   '/register',
-  //   validateUser,
   upload.single('avatar'),
+  validateUser,
   registration,
 );
 authRouter.post('/login', validateUser, login);

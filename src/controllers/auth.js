@@ -1,15 +1,13 @@
-const fs = require('fs');
-const path = require('path');
-
 const jwt = require('jsonwebtoken');
+const { resizeImage, renameImage } = require('../helpers/workWithImage');
 const { users } = require('../models');
 require('dotenv').config();
 
 const registration = async (req, res, next) => {
   const password = req.body.password;
   const email = req.body.email.toLowerCase();
-  const user = await users.findByEmail(email);
 
+  const user = await users.findByEmail(email);
   if (user) {
     return res.status(409).send({
       message: 'Email in use',
@@ -17,26 +15,25 @@ const registration = async (req, res, next) => {
   }
 
   try {
-    const newUser = await users.createUser({ email, password });
+    const pathImage = req.file && Date.now() + '-' + req.file.originalname;
+
+    const avatarURL =
+      pathImage &&
+      `http://localhost:${process.env.PORT || 3000}/images/${pathImage}`;
 
     if (req.file) {
-      await fs.rename(
-        req.file.path,
-        path.join(
-          __dirname,
-          '../../public/images',
-          Date.now() + '-' + req.file.originalname,
-        ),
-        err => {
-          if (err) throw err;
-        },
-      );
+      const pathFile = req.file.path;
+      await resizeImage(pathFile);
+      await renameImage(pathFile, pathImage);
     }
+
+    const newUser = await users.createUser({ email, password, avatarURL });
 
     res.status(201).send({
       user: {
         email: newUser.email,
         subscription: 'free',
+        avatarURL: newUser.avatarURL,
       },
     });
   } catch (err) {
@@ -65,6 +62,7 @@ const login = async (req, res, next) => {
       user: {
         email: user.email,
         subscription: user.subscription,
+        avatarURL: user.avatarURL,
       },
     });
   } catch (err) {

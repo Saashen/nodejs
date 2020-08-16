@@ -4,8 +4,8 @@ const findById = id => User.findOne({ _id: id });
 
 const findByEmail = email => User.findOne({ email });
 
-const createUser = ({ email, password }) => {
-  const user = new User({ email, password });
+const createUser = ({ email, password, avatarURL = null }) => {
+  const user = new User({ email, password, avatarURL });
   return user.save();
 };
 
@@ -16,4 +16,17 @@ const updateUserSubscription = ({ id, newValue }) =>
     { returnOriginal: false, upsert: false },
   );
 
-module.exports = { findById, findByEmail, createUser, updateUserSubscription };
+const updateUserImage = ({ id, avatarURL }) =>
+  User.findByIdAndUpdate(
+    id,
+    { $set: { avatarURL } },
+    { returnOriginal: false, upsert: false },
+  );
+
+module.exports = {
+  findById,
+  findByEmail,
+  createUser,
+  updateUserSubscription,
+  updateUserImage,
+};
