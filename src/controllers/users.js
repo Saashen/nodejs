@@ -5,7 +5,7 @@ require('dotenv').config();
 const currentUser = async (req, res, next) => {
   try {
     const user = await users.findById(req.user);
-    res.status(200).send({
+    return res.status(200).send({
       email: user.email,
       subscription: user.subscription,
     });
@@ -20,7 +20,7 @@ const updateUser = async (req, res, next) => {
     const newValue = req.body.subscription;
 
     const user = await users.updateUserSubscription({ id, newValue });
-    res
+    return res
       .status(200)
       .send({ email: user.email, subscription: user.subscription });
   } catch (err) {
@@ -41,7 +41,7 @@ const updateAvatar = async (req, res, next) => {
     await renameImage(pathFile, pathImage);
 
     const user = await users.updateUserImage({ id, avatarURL });
-    res.status(200).send({
+    return res.status(200).send({
       avatarURL: user.avatarURL,
     });
   } catch (err) {

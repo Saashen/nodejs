@@ -29,7 +29,7 @@ const registration = async (req, res, next) => {
 
     const newUser = await users.createUser({ email, password, avatarURL });
 
-    res.status(201).send({
+    return res.status(201).send({
       user: {
         email: newUser.email,
         subscription: 'free',
@@ -74,7 +74,7 @@ const logout = async (req, res, next) => {
   try {
     const user = await users.findById(req.user);
     await user.updateOne({ token: null });
-    res.status(204).send();
+    return res.status(204).send();
   } catch (err) {
     next(err);
   }
