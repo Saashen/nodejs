@@ -17,14 +17,12 @@ const validateCreateUser = (req, res, next) => {
       message: `missing required ${result.error.details[0].context.key} field`,
     });
   }
-
   next();
 };
 
-const validateUpdateUser = (req, res, next) => {
+const validateUpdateUser = (req, res, next) =>
   req.body && (req.body.name || req.body.email || req.body.phone)
     ? next()
     : res.status(400).send({ message: 'missing fields' });
-};
 
 module.exports = { validateCreateUser, validateUpdateUser };

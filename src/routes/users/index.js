@@ -6,7 +6,13 @@ const {
   firstUserSubscriptionValidate,
   secondUserSubscriptionValidate,
 } = require('../../validation/usersValidation');
-const { currentUser, updateUser } = require('../../controllers/users');
+const {
+  currentUser,
+  updateUser,
+  updateAvatar,
+} = require('../../controllers/users');
+const { isImage } = require('../../validation/imageValidation');
+const { upload } = require('../../helpers/multer');
 
 userRouter
   .get('/current', isAuth, currentUser)
@@ -16,6 +22,7 @@ userRouter
     firstUserSubscriptionValidate,
     secondUserSubscriptionValidate,
     updateUser,
-  );
+  )
+  .patch('/avatars', isAuth, upload.single('avatar'), isImage, updateAvatar);
 
 module.exports = userRouter;

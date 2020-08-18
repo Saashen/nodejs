@@ -6,7 +6,7 @@ const listContacts = async (req, res, next) => {
 
   try {
     const result = await contacts.getAllContacts({ page, limit, sub });
-    res.status(200).send(result);
+    return res.status(200).send(result);
   } catch (err) {
     next(err);
   }
@@ -16,7 +16,7 @@ const getContactById = async (req, res, next) => {
   try {
     const { contactId } = req.params;
     const contact = await contacts.getOneContact(contactId);
-    contact
+    return contact
       ? res.status(200).send(contact)
       : res.status(404).send({ message: 'Not found' });
   } catch (err) {
@@ -27,7 +27,7 @@ const getContactById = async (req, res, next) => {
 const addContact = async (req, res, next) => {
   try {
     const contact = await contacts.createContact(req.body);
-    res.status(201).send(contact);
+    return res.status(201).send(contact);
   } catch (err) {
     next(err);
   }
@@ -37,7 +37,7 @@ const updateContact = async (req, res, next) => {
   try {
     const { contactId } = req.params;
     const contact = await contacts.updateContactById(contactId, req.body);
-    contact
+    return contact
       ? res.status(200).send(contact)
       : res.status(404).send({ message: 'Not found' });
   } catch (err) {
@@ -49,7 +49,7 @@ const removeContact = async (req, res, next) => {
   try {
     const { contactId } = req.params;
     const contact = await contacts.removeContactById(contactId);
-    contact
+    return contact
       ? res.status(200).send({ message: 'Contact deleted' })
       : res.status(404).send({ message: 'Not found' });
   } catch (err) {

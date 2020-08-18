@@ -7,10 +7,14 @@ const userSchema = new Schema(
     email: {
       type: String,
       required: true,
+      unique: true,
     },
     password: {
       type: String,
       required: true,
+    },
+    avatarURL: {
+      type: String,
     },
     subscription: {
       type: String,
@@ -27,7 +31,7 @@ userSchema.pre('save', function () {
 });
 
 userSchema.methods.validPassport = function (password) {
-  return bcrypt.compareSync(password, this.password)
+  return bcrypt.compareSync(password, this.password);
 };
 
 const userModel = mongoose.model('User', userSchema);

@@ -1,19 +1,32 @@
 const User = require('./schemas/user');
 
-const findById = async id => User.findOne({ _id: id });
+const findById = id => User.findOne({ _id: id });
 
-const findByEmail = async email => User.findOne({ email });
+const findByEmail = email => User.findOne({ email });
 
-const createUser = async ({ email, password }) => {
-  const user = new User({ email, password });
+const createUser = ({ email, password, avatarURL = null }) => {
+  const user = new User({ email, password, avatarURL });
   return user.save();
 };
 
-const updateUserSubscription = async ({ id, newValue }) =>
+const updateUserSubscription = ({ id, newValue }) =>
   User.findByIdAndUpdate(
     id,
     { $set: { subscription: newValue } },
     { returnOriginal: false, upsert: false },
   );
 
-module.exports = { findById, findByEmail, createUser, updateUserSubscription };
+const updateUserImage = ({ id, avatarURL }) =>
+  User.findByIdAndUpdate(
+    id,
+    { $set: { avatarURL } },
+    { returnOriginal: false, upsert: false },
+  );
+
+module.exports = {
+  findById,
+  findByEmail,
+  createUser,
+  updateUserSubscription,
+  updateUserImage,
+};
