@@ -4,8 +4,15 @@ const findById = id => User.findOne({ _id: id });
 
 const findByEmail = email => User.findOne({ email });
 
-const createUser = ({ email, password, avatarURL = null }) => {
-  const user = new User({ email, password, avatarURL });
+const findByVerToken = verificationToken => User.findOne({ verificationToken });
+
+const createUser = ({
+  email,
+  password,
+  avatarURL = null,
+  verificationToken,
+}) => {
+  const user = new User({ email, password, avatarURL, verificationToken });
   return user.save();
 };
 
@@ -26,6 +33,7 @@ const updateUserImage = ({ id, avatarURL }) =>
 module.exports = {
   findById,
   findByEmail,
+  findByVerToken,
   createUser,
   updateUserSubscription,
   updateUserImage,

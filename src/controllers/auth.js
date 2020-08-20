@@ -1,22 +1,27 @@
 const jwt = require('jsonwebtoken');
-const { resizeImage, renameImage } = require('../helpers/workWithImage');
-const { users } = require('../models');
+const { v4: uuidv4 } = require('uuid');
+const sendEmail = require('../helpers/mailGeneration');
+const getName = require('../helpers/nameFromEmail');
 require('dotenv').config();
 
+const { resizeImage, renameImage } = require('../helpers/workWithImage');
+const { users } = require('../models');
+
 const registration = async (req, res, next) => {
-  const password = req.body.password;
-  const email = req.body.email.toLowerCase();
-
-  const user = await users.findByEmail(email);
-  if (user) {
-    return res.status(409).send({
-      message: 'Email in use',
-    });
-  }
-
   try {
-    const pathImage = req.file && Date.now() + '-' + req.file.originalname;
+    const password = req.body.password;
+    const email = req.body.email.toLowerCase();
+    const name = getName(email);
+    const verificationToken = uuidv4();
 
+    const user = await users.findByEmail(email);
+    if (user) {
+      return res.status(409).send({
+        message: 'Email in use',
+      });
+    }
+
+    const pathImage = req.file && Date.now() + '-' + req.file.originalname;
     const avatarURL =
       pathImage &&
       `http://localhost:${process.env.PORT || 3000}/images/${pathImage}`;
@@ -27,7 +32,14 @@ const registration = async (req, res, next) => {
       await renameImage(pathFile, pathImage);
     }
 
-    const newUser = await users.createUser({ email, password, avatarURL });
+    await sendEmail(verificationToken, email, name);
+
+    const newUser = await users.createUser({
+      email,
+      password,
+      avatarURL,
+      verificationToken,
+    });
 
     return res.status(201).send({
       user: {
@@ -48,6 +60,12 @@ const login = async (req, res, next) => {
 
   if (!user || !user.validPassport(password)) {
     return res.status(401).send({ message: 'Email or password is wrong.' });
+  }
+
+  if (user && user.verificationToken) {
+    return res
+      .status(401)
+      .send({ message: 'Please check your email and complete verification.' });
   }
 
   try {
@@ -80,4 +98,16 @@ const logout = async (req, res, next) => {
   }
 };
 
-module.exports = { registration, login, logout };
+const verify = async (req, res, next) => {
+  const { verificationToken } = req.params;
+  const user = await users.findByVerToken(verificationToken);
+
+  if (!user) {
+    return res.status(404).send({ message: 'User not found' });
+  }
+
+  await user.updateOne({ verificationToken: null });
+  return res.status(200).send({ message: 'Verification completed.' });
+};
+
+module.exports = { registration, login, logout, verify };

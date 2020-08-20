@@ -8,6 +8,7 @@ const currentUser = async (req, res, next) => {
     return res.status(200).send({
       email: user.email,
       subscription: user.subscription,
+      avatarURL: user.avatarURL,
     });
   } catch (err) {
     next(err);
