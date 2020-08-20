@@ -32,7 +32,7 @@ const registration = async (req, res, next) => {
       await renameImage(pathFile, pathImage);
     }
 
-    sendEmail(verificationToken, email, name);
+    await sendEmail(verificationToken, email, name);
 
     const newUser = await users.createUser({
       email,
